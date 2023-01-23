@@ -1,4 +1,8 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Task {
+    public static List<Task> tasks = new ArrayList<>();
     protected String description;
     protected boolean isDone;
     protected String words;
@@ -9,6 +13,14 @@ public class Task {
         this.isDone = false;
         this.words = "";
 
+    }
+
+    public String toSaveString() {
+        if (isDone) {
+            return "1";
+        } else {
+            return "0";
+        }
     }
 
     public String getStatusIcon() {
@@ -23,6 +35,7 @@ public class Task {
             return this.words;
         }
     }
+
     public void mark() {
         this.isDone = true;
         System.out.println("Nice! I've marked this task as done:\n" +  this);
@@ -34,4 +47,3 @@ public class Task {
         System.out.println("OK, I've marked this task as not done yet:\n"+ this);
     }
 }
-
