@@ -1,3 +1,5 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
@@ -45,12 +47,9 @@ public class Duke {
                 reply = reply.replaceAll("event", "");
                 String[] replies = reply.split("/",2);
                 String[] datecheck =  replies[1].split("/");
-                datecheck[0] = datecheck[0].replaceAll("from", "");
-                datecheck[1] = datecheck[1].replaceAll("to","");
-                replies[1] = "" + datecheck[0] + "-" + datecheck[1];
-                for (int  i = 0; i < replies.length; i++) {
-                    System.out.println(replies[i]);
-                }
+                datecheck[0] = datecheck[0].replaceAll("from ", "");
+                datecheck[1] = datecheck[1].replaceAll("to ","");
+                replies[1] =   datecheck[0] + "/" + datecheck[1];
                 handleInvalidArgs checked = new handleInvalidArgs(replies);
                 checked.checkForEvent(checked.replies);
                 Event event = new Event(replies[0],replies[1]);
@@ -103,11 +102,20 @@ public class Duke {
             Task current = null;
             if (keywords[0].equals("todo")) {
                 current = new ToDo(keywords[2]);
-
             } else if (keywords[0].equals("event")) {
-                current = new Event(keywords[2], keywords[3]);
+                String[] toandfrom =  keywords[3].split("-");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm, MMM dd yyyy");
+                LocalDateTime starting = LocalDateTime.parse(toandfrom[0], formatter);
+                LocalDateTime ending = LocalDateTime.parse(toandfrom[1], formatter);
+                String timeStr = starting.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"));
+                String timeEnd = ending.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"));
+                String total = timeStr +"/" + timeEnd;
+                current = new Event(keywords[2], total);
             } else if (keywords[0].equals("deadline")) {
-                current = new Deadline(keywords[2], keywords[3]);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm, MMM dd yyyy");
+                LocalDateTime myDateObj = LocalDateTime.parse(keywords[3], formatter);
+                String timeStr = myDateObj.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm"));
+                current = new Deadline(keywords[2], timeStr);
             } else {
                 System.out.println("error");
             }
